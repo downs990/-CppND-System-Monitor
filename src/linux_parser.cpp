@@ -3,9 +3,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "linux_parser.h"
 
+using std::cout;
 using std::stof;
 using std::string;
 using std::to_string;
@@ -30,7 +32,7 @@ string LinuxParser::OperatingSystem() {
         }
       }
     }
-  }
+  } 
   return value;
 }
 
