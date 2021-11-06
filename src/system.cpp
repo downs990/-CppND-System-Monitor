@@ -3,16 +3,21 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "process.h"
 #include "processor.h"
 #include "system.h"
 #include "linux_parser.h"
 
+
 using std::set;
 using std::size_t;
 using std::string;
 using std::vector;
+using std::cout;
+
+
 /*You need to complete the mentioned TODOs in order to satisfy the rubric criteria "The student will be able to extract and display basic data about the system."
 
 You need to properly format the uptime. Refer to the comments mentioned in format. cpp for formatting the uptime.*/
@@ -30,14 +35,13 @@ std::string System::Kernel() {
 
 // TODO: Return the system's memory utilization
 float System::MemoryUtilization() { 
-    return 0.0; 
+  return LinuxParser::MemoryUtilization(); 
 
 }
 
 // TODO: Return the operating system name
 std::string System::OperatingSystem() {
-  
-  // no parse needed ????
+   
   string systemData = LinuxParser::OperatingSystem(); 
   return systemData; 
     

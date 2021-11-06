@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 
 #include "linux_parser.h"
 
@@ -12,6 +13,7 @@ using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
+using std::unordered_map;
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
@@ -70,7 +72,50 @@ vector<int> LinuxParser::Pids() {
 }
 
 // TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+float LinuxParser::MemoryUtilization() { 
+//   Total used memory = MemTotal - MemFree
+//	 Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
+// 	 Buffers (blue) = Buffers
+//   Cached memory (yellow) = Cached + SReclaimable - Shmem
+//   Swap = SwapTotal - SwapFree
+  
+    unordered_map<string, string> propertyNameAndValue;
+  
+  
+    string trash;
+    string totalMemoryUsed, memTotal, memFree, memAvailable, buffers;
+    string line;
+    std::ifstream stream(kProcDirectory + kMeminfoFilename);
+    if (stream.is_open()) {
+      
+      int index = 0;
+      while(index < 5){//!stream.eof()){
+        std::getline(stream, line);
+        std::istringstream linestream(line);
+        
+        string name, value;
+        linestream >> name >> value;
+        name = std::regex_replace(name, std::regex("\\:"), ""); // remove : from name 
+        
+//         cout << "Name: " << name << " Value: " << value << "\n";
+        propertyNameAndValue[name] = value;
+        
+        index++;
+      }
+       
+//       cout << propertyNameAndValue["MemTotal"] << "\n";
+//       cout << propertyNameAndValue["MemFree"] << "\n";
+//       cout << propertyNameAndValue["MemAvailable"] << "\n";
+    }
+  
+  
+  	// Convert string to float 
+  	string memtotal = propertyNameAndValue["MemTotal"];
+	float totalmem = ::atof(memtotal.c_str());
+//   	cout << "float: " << totalmem;
+   
+    return totalmem; 
+}
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { return 0; }
