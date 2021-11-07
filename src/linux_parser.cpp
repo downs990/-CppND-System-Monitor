@@ -73,48 +73,51 @@ vector<int> LinuxParser::Pids() {
 
 // TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { 
-//   Total used memory = MemTotal - MemFree
-//	 Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
-// 	 Buffers (blue) = Buffers
-//   Cached memory (yellow) = Cached + SReclaimable - Shmem
-//   Swap = SwapTotal - SwapFree
+ 
   
     unordered_map<string, string> propertyNameAndValue;
   
   
-    string trash;
-    string totalMemoryUsed, memTotal, memFree, memAvailable, buffers;
+    string trash; 
     string line;
     std::ifstream stream(kProcDirectory + kMeminfoFilename);
     if (stream.is_open()) {
       
       int index = 0;
-      while(index < 5){//!stream.eof()){
+      while(index < 48){//!stream.eof()){
         std::getline(stream, line);
         std::istringstream linestream(line);
         
         string name, value;
         linestream >> name >> value;
-        name = std::regex_replace(name, std::regex("\\:"), ""); // remove : from name 
-        
-//         cout << "Name: " << name << " Value: " << value << "\n";
+        name = std::regex_replace(name, std::regex("\\:"), ""); // removes colon char from name  
         propertyNameAndValue[name] = value;
         
         index++;
-      }
-       
-//       cout << propertyNameAndValue["MemTotal"] << "\n";
-//       cout << propertyNameAndValue["MemFree"] << "\n";
-//       cout << propertyNameAndValue["MemAvailable"] << "\n";
+      } 
     }
   
   
+//   Total used memory = MemTotal - MemFree
+//	 Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
+// 	 Buffers (blue) = Buffers
+//   Cached memory (yellow) = Cached + SReclaimable - Shmem
+//   Swap = SwapTotal - SwapFree
+   
   	// Convert string to float 
   	string memtotal = propertyNameAndValue["MemTotal"];
+    string memfree =  propertyNameAndValue["MemFree"];
+//   	string buffers =  propertyNameAndValue["Buffers"];
+//   	string cached =   propertyNameAndValue["Cached"];	
+  
 	float totalmem = ::atof(memtotal.c_str());
-//   	cout << "float: " << totalmem;
-   
-    return totalmem; 
+  	float freemem = ::atof(memfree.c_str());
+//   	float buff = ::atof(buffers.c_str());
+//     float cach = ::atof(cached.c_str());
+//   	float green = (totalmem - freemem) - (buff + cach);
+  
+  	float totalMemUsed = (totalmem - freemem) / totalmem; // percentage % 
+    return totalMemUsed;
 }
 
 // TODO: Read and return the system uptime
