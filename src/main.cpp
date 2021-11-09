@@ -9,6 +9,6 @@
 
 int main() {
   System system;
-  system.MemoryUtilization();
+//   system.UpTime();     // Testing 
   NCursesDisplay::Display(system);  // MY_TODO: Uncomment after testing  
 }
