@@ -9,6 +9,6 @@
 
 int main() {
   System system;
-  system.Cpu().Utilization();     // Testing 
-//   NCursesDisplay::Display(system);  // MY_TODO: Uncomment after testing  
+//   system.Cpu().Utilization();     // Testing 
+  NCursesDisplay::Display(system);  // MY_TODO: Uncomment after testing  
 }
