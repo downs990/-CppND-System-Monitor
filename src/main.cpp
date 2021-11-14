@@ -10,5 +10,6 @@
 int main() {
   System system;
 //   system.Cpu().Utilization();     // Testing 
+//   system.TotalProcesses();
   NCursesDisplay::Display(system);  // MY_TODO: Uncomment after testing  
 }

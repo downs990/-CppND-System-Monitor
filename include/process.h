@@ -3,8 +3,8 @@
 
 #include <string>
 /*
-Basic class for Process representation
-It contains relevant attributes as shown below
+Basic class for Process representation 
+It contains relevant attributes as shown below 
 */
 class Process {
  public:
@@ -18,6 +18,7 @@ class Process {
 
   // TODO: Declare any necessary private members
  private:
+  
 };
 
 #endif
