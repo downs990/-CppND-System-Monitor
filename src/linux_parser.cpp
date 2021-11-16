@@ -112,9 +112,9 @@ float LinuxParser::MemoryUtilization() {
   
 	float totalmem = ::atof(memtotal.c_str());
   	float freemem = ::atof(memfree.c_str());
-//   	float buff = ::atof(buffers.c_str());
+//     float buff = ::atof(buffers.c_str());
 //     float cach = ::atof(cached.c_str());
-//   	float green = (totalmem - freemem) - (buff + cach);
+//     float green = (totalmem - freemem) - (buff + cach);
   
   	float totalMemUsed = (totalmem - freemem) / totalmem; // percentage % 
     return totalMemUsed;
@@ -149,7 +149,7 @@ long LinuxParser::Jiffies() {
   
   return 0; 
 }
-
+ 
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
@@ -168,8 +168,6 @@ vector<string> LinuxParser::CpuUtilization() { return {}; }
 // TODO: Read and return the total number of processes
 int LinuxParser::TotalProcesses() {   
   
-     
- 
   	string line, name;
   	int value; 
     std::ifstream stream(kProcDirectory + kStatFilename);
@@ -211,20 +209,45 @@ int LinuxParser::RunningProcesses() {
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Command(int pid = 0) { 
   return string(); 
+} 
+
+// TODO: Read and return the memory used by a process 
+string LinuxParser::Ram(int pid = 0) { 
+  // https://man7.org/linux/man-pages/man5/proc.5.html     ???? 
+  return string(); 
 }
 
-// TODO: Read and return the memory used by a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Ram(int pid = 0) { return string(); }
+// TODO: Read and return the user ID associated with a process 
+string LinuxParser::Uid(int pid = 0) { 
+  
+  //  /proc/[PID]/status
+  //  check each line until "Uid:"
+  return string(); 
+}
 
-// TODO: Read and return the user ID associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Uid(int pid[[maybe_unused]]) { return string(); }
+// TODO: Read and return the user associated with a process 
+string LinuxParser::User(int pid = 0) {
+  
+  // /etc/passwd     is used to match "Uid" to "Username"
+  
+//   usbmux    :x:117:46:usbmux daemon,,,:/var/lib/usbmux:/bin/false
+//   hplip     :x:118:7:HPLIP system user,,,:/var/run/hplip:/bin/false
+//   postgres  :x:119:126:PostgreSQL administrator,,,:/var/lib/postgresql:/bin/bash
+//   redis     :x:120:127::/var/lib/redis:/bin/false
+  // ^             ^   
+  // Username      Uid 
+  return string(); 
+}
 
-// TODO: Read and return the user associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(int pid[[maybe_unused]]) { return string(); }
-
-// TODO: Read and return the uptime of a process
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+// TODO: Read and return the uptime of a process 
+long LinuxParser::UpTime(int pid = 0) { 
+  
+  //   /proc/[pid]/stat 
+  
+  // Example: 
+  // cat /proc/2141/stat  
+  // 2141 (code) S 2054 1 1 0 -1 1077936128 39501 0 2 0 212 60 0 0 20 0 16 0 632214   ... many more values
+  //                                                                          ^
+  // 																"UpTime" is 19th value after (<Username>) S 
+  return 0; 
+}
