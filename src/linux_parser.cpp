@@ -5,6 +5,8 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
+#include <regex>
+
 
 #include "linux_parser.h"
 
@@ -14,6 +16,8 @@ using std::string;
 using std::to_string;
 using std::vector;
 using std::unordered_map;
+using std::regex;
+using std::sregex_token_iterator;
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
@@ -147,19 +151,18 @@ long LinuxParser::Jiffies() {
 //   this value was expressed in jiffies. Since Linux 2.6, the value is expressed
 //   in clock ticks (divide by sysconf(_SC_CLK_TCK)).
   
-  return 0; 
+  return 0;  
 }
- 
+  
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
+// TODO: Read and return the number of active jiffies for a PID 
 long LinuxParser::ActiveJiffies(int pid = 0) { return 0; }
 
 // TODO: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return 0; }
 
 // TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; } 
+long LinuxParser::IdleJiffies() { return 0; }  
 
 // TODO: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { return {}; }
@@ -205,9 +208,10 @@ int LinuxParser::RunningProcesses() {
 }
 
 
-// TODO: Read and return the command associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
+// TODO: Read and return the command associated with a process 
 string LinuxParser::Command(int pid = 0) { 
+  
+  // Linux stores the command used to launch the function in the /proc/[pid]/cmdline file. 
   return string(); 
 } 
 
@@ -217,16 +221,41 @@ string LinuxParser::Ram(int pid = 0) {
   return string(); 
 }
 
+
+
+
 // TODO: Read and return the user ID associated with a process 
 string LinuxParser::Uid(int pid = 0) { 
+// !
+   
+//   The UID for a process is stored in /proc/[PID]/status. (on line 9)
+//  
+//   Uid:      0         0         0         0
+//   		  ^
+//        Uid for PID
   
-  //  /proc/[PID]/status
-  //  check each line until "Uid:"
-  return string(); 
+  	string line, name, value; 
+    std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
+  
+    if (stream.is_open()) {
+      while(name != "Uid:"){ 
+        std::getline(stream, line);
+        std::istringstream linestream(line);
+        
+        linestream >> name >> value; 
+      } 
+    }
+  
+//   	cout << "name: " << name << " Pid: " << value;
+//     long uid = stol(value, nullptr, 10);
+
+  return value; 
 }
 
 // TODO: Read and return the user associated with a process 
 string LinuxParser::User(int pid = 0) {
+  
+  string uid = Uid(pid);
   
   // /etc/passwd     is used to match "Uid" to "Username"
   
@@ -236,8 +265,39 @@ string LinuxParser::User(int pid = 0) {
 //   redis     :x:120:127::/var/lib/redis:/bin/false
   // ^             ^   
   // Username      Uid 
-  return string(); 
+  
+  
+  string line, username, currentUid; 
+  std::ifstream stream2(kPasswordPath);
+  
+  if (stream2.is_open()) {
+    while(currentUid != uid){ 
+      std::getline(stream2, line);
+      std::istringstream linestream(line);
+ 
+      
+      // Source: https://stackoverflow.com/questions/9435385/split-a-string-using-c11/27511119        
+      // Java like string split() on  delimiter :
+      const string& input = line;
+      const string& regex = ":";
+      std::regex re(regex);
+      sregex_token_iterator
+          first{input.begin(), input.end(), re, -1},
+          last;
+      vector<string> splits = {first,last};
+      
+      
+      username = splits[0];
+      currentUid = splits[2];
+
+      cout << "usename: " << username << " uid: " << currentUid;
+    } 
+  }
+   
+  
+  return username; 
 }
+ 
 
 // TODO: Read and return the uptime of a process 
 long LinuxParser::UpTime(int pid = 0) { 
@@ -248,6 +308,26 @@ long LinuxParser::UpTime(int pid = 0) {
   // cat /proc/2141/stat  
   // 2141 (code) S 2054 1 1 0 -1 1077936128 39501 0 2 0 212 60 0 0 20 0 16 0 632214   ... many more values
   //                                                                          ^
-  // 																"UpTime" is 19th value after (<Username>) S 
-  return 0; 
+  // 																"UpTime" is 22nd  
+   
+  string line, value; 
+  std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
+  
+  if (stream.is_open()) { 
+    
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+        
+    // Gets the 22nd value from /proc/[pid]/stat 
+    linestream >> value >> value >> value >>  value >>  value >>  value 
+      >> value >>  value >>  value >>  value >>  value >>  value 
+      >> value >>  value >>  value >>  value >>  value >>  value 
+      >>  value >>  value >>  value >>  value;  
+
+  }
+  	
+  long uptimeLong = stol(value, nullptr, 10);
+//   cout << "VALUEEE: " << uptimeLong << "\n";
+  
+  return uptimeLong; 
 }
