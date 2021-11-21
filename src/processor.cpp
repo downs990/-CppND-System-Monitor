@@ -60,37 +60,25 @@ float Processor::Utilization() {
 //  9.  guest: running a normal guest
 //  10. guest_nice: running a niced guest
   
-  
-  
-  string user_str = "", nice_str = "", system_str = "", idle_str = "", iowait_str = "", 
-  		 irq_str = "", softirq_str = "", steal_str = "", guest_str = "", guest_nice_str = "";
+  	vector<string> cpuPropertyValues = LinuxParser::CpuUtilization();
+      
    
-  
-  string line;
-  std::ifstream stream(LinuxParser::kProcDirectory + LinuxParser::kStatFilename);
-  
-  if (stream.is_open()) {
-    std::getline(stream, line);
-    std::istringstream linestream(line);
-    
-    string cpu_title = "";
-    linestream >> cpu_title >> user_str >> nice_str >> system_str >> idle_str >> 
-      			  iowait_str >> irq_str >> softirq_str >> steal_str >> guest_str >> guest_nice_str;
-    
 	// Keeps track of current and previous values.
- 	UpdateValuesMap("user", user_str);
-    UpdateValuesMap("nice", nice_str);
-    UpdateValuesMap("system", system_str);
-    UpdateValuesMap("idle", idle_str);
-    UpdateValuesMap("iowait", iowait_str);
-    UpdateValuesMap("irq", irq_str);
-    UpdateValuesMap("softirq", softirq_str);
-    UpdateValuesMap("steal", steal_str);
-    UpdateValuesMap("guest", guest_str);
-    UpdateValuesMap("guest_nice", guest_nice_str);
-    
-  }
-   
+ 	UpdateValuesMap("user", cpuPropertyValues[0]);
+    UpdateValuesMap("nice", cpuPropertyValues[1]);
+    UpdateValuesMap("system", cpuPropertyValues[2]);
+    UpdateValuesMap("idle", cpuPropertyValues[3]);
+    UpdateValuesMap("iowait", cpuPropertyValues[4]);
+    UpdateValuesMap("irq", cpuPropertyValues[5]);
+    UpdateValuesMap("softirq", cpuPropertyValues[6]);
+    UpdateValuesMap("steal", cpuPropertyValues[7]);
+    UpdateValuesMap("guest", cpuPropertyValues[8]);
+    UpdateValuesMap("guest_nice", cpuPropertyValues[9]);
+ 
+//   	TODO: Check if this still works ^^^
+  
+  
+  
   
 //  ************  ALGORITHM TO IMPLEMENT FOR CPU USAGE %  ***************
 //   	[0] = previous      [1] = current 
