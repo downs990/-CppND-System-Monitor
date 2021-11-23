@@ -1,6 +1,7 @@
 #include "ncurses_display.h"
 #include "system.h"
-#include "linux_parser.h"   // TODO: Remove after testing
+// #include "linux_parser.h"   // TODO: Remove after testing
+// #include <iostream>
 
 // How to run the program  ??
 
@@ -9,8 +10,11 @@
 
 int main() {
   System system; 
-//   system.UpTime(1); // Testing: ProcessID 1 = UpTime 3891
+  
+  // Testing: ProcessID 1 = UpTime 3891
+//   system.UpTime(1);  
 //   LinuxParser::UpTime(1);
-  LinuxParser::User(1); 
-//   NCursesDisplay::Display(system);  // MY_TODO: Uncomment after testing  
+//   LinuxParser::User(1); 
+//   std::cout << "Process Count: " << system.Processes().size() << "\n";
+  NCursesDisplay::Display(system);  
 }

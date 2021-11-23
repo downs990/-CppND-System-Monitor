@@ -11,6 +11,10 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+Process::Process(int pid){
+  myPID = pid;
+}
+
 // TODO: Return this process's ID
 int Process::Pid() { 
   return myPID; 
@@ -42,9 +46,6 @@ long int Process::UpTime() {
 }
 
 // TODO: Overload the "less than" comparison operator for Process objects 
-bool Process::operator<(Process const& a = Process() ) const {  // ??? Do I need to create a no-arg constructor ??
-  //									^^^ Trying to make this arg optional. 
-  
-  
+bool Process::operator<(Process const& a[[maybe_unused]]) const { 
   return true; 
 }

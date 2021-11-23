@@ -34,7 +34,7 @@ string LinuxParser::OperatingSystem() {
       while (linestream >> key >> value) {
         if (key == "PRETTY_NAME") {
           std::replace(value.begin(), value.end(), '_', ' ');
-          return value;
+          return value; 
         }
       }
     }
@@ -166,10 +166,9 @@ long LinuxParser::IdleJiffies() { return 0; }
 
 // TODO: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { 
-  
-  
+   
   //user_str, nice_str, system_str, idle_str, iowait_str, irq_str, softirq_str, steal_str, guest_str, guest_nice_str  
-  vector<string> cpuPropertyValues = {"", "", "", "", "", "", "", "", "", ""}
+  vector<string> cpuPropertyValues = {"", "", "", "", "", "", "", "", "", ""};
   string line;
   std::ifstream stream(LinuxParser::kProcDirectory + LinuxParser::kStatFilename);
   
@@ -181,10 +180,10 @@ vector<string> LinuxParser::CpuUtilization() {
     linestream >> cpu_title 
       			>> cpuPropertyValues[0] >> cpuPropertyValues[1] >> cpuPropertyValues[2] >> cpuPropertyValues[3] 
       			>> cpuPropertyValues[4] >> cpuPropertyValues[5] >> cpuPropertyValues[6] >> cpuPropertyValues[7] 
-      			>> cpuPropertyValues[8] >> cpuPropertyValues[9];  // TODO: Check if this still works ^^^
+      			>> cpuPropertyValues[8] >> cpuPropertyValues[9];   
   }
-   
-  return cpuPropertyValues; 
+    
+  return cpuPropertyValues;
 }  
 
 
@@ -232,14 +231,47 @@ int LinuxParser::RunningProcesses() {
 string LinuxParser::Command(int pid = 0) { 
   
   // Linux stores the command used to launch the function in the /proc/[pid]/cmdline file. 
-  return string(); 
+  string line, command; 
+  std::ifstream stream(kProcDirectory + to_string(pid) + kCmdlineFilename );
+  
+  if (stream.is_open()) { 
+    
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+         
+    linestream >> command; 
+
+  }
+  return command; 
 } 
 
 // TODO: Read and return the memory used by a process 
-string LinuxParser::Ram(int pid = 0) { 
-  // https://man7.org/linux/man-pages/man5/proc.5.html     ???? 
-  return string(); 
-}
+string LinuxParser::Ram(int pid = 0) {  
+  
+  //    /proc/[pid]/status
+  // ...
+  // VmSize: 93264 kB
+  //            ^
+  //          RAM (conver to MB by dividing by 1,000)
+  
+  
+   	string line, name, value; 
+    std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
+  
+    if (stream.is_open()) {
+      while(name != "VmSize:"){ 
+        std::getline(stream, line);
+        std::istringstream linestream(line);
+        
+        linestream >> name >> value; 
+      } 
+    }
+  
+  long ramLong = stol(value, nullptr, 10);
+  long ramMB = ramLong / 1000; 
+  
+  return to_string(ramMB); 
+}  
 
 
 
@@ -310,7 +342,7 @@ string LinuxParser::User(int pid = 0) {
       username = splits[0];
       currentUid = splits[2];
 
-      cout << "usename: " << username << " uid: " << currentUid;
+//       cout << "usename: " << username << " uid: " << currentUid;
     } 
   }
    
