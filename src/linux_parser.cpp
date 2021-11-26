@@ -383,3 +383,8 @@ long LinuxParser::UpTime(int pid = 0) {
   
   return uptimeLong; 
 }
+
+vector<long> LinuxParser::getProcessStats(int pid = 0){
+  	// TODO: Very similar to UpTime(int pid) above. 
+	return [];
+}
