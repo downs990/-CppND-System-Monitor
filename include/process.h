@@ -18,13 +18,11 @@ class Process {
   float CpuUtilization();                  // TODO: See src/process.cpp
   string Ram();                       // TODO: See src/process.cpp
   long int UpTime();                       // TODO: See src/process.cpp
-  bool operator<(Process const& a) const;  // TODO: See src/process.cpp
+  bool operator<(Process &a);  // TODO: See src/process.cpp
 
   // TODO: Declare any necessary private members
  private:
-  int myPID;
-  float myCpuUtilization;
-//   string myUsername; // Username that generated this process
+  int myPID; 
   
 };
 

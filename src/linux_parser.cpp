@@ -141,8 +141,8 @@ long LinuxParser::UpTime() {
   return uptimeLong; 
 } 
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { 
+
+
 
 //   "/proc/[pid]/stat"
 //   
@@ -151,18 +151,42 @@ long LinuxParser::Jiffies() {
 //   this value was expressed in jiffies. Since Linux 2.6, the value is expressed
 //   in clock ticks (divide by sysconf(_SC_CLK_TCK)).
   
-  return 0;  
+
+
+
+// TODO: Read and return the number of jiffies for the system
+long LinuxParser::Jiffies() { 
+  long totalJiffies = ActiveJiffies() + IdleJiffies();
+  return totalJiffies;  
 }
-  
+
 
 // TODO: Read and return the number of active jiffies for a PID 
-long LinuxParser::ActiveJiffies(int pid = 0) { return 0; }
+long LinuxParser::ActiveJiffies(int pid) { 
+  
+  // Active Clock ticks passed for this process. 
+  return 0; 
+}
 
 // TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
+long LinuxParser::ActiveJiffies() { 
+
+  
+  // Total clock ticks passed for system active time.  
+  return 0; 
+}
 
 // TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }  
+long LinuxParser::IdleJiffies() { 
+  
+  // Total clock ticks passed for system idle time.
+  return 0; 
+}  
+
+
+
+
+
 
 // TODO: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { 
@@ -378,13 +402,37 @@ long LinuxParser::UpTime(int pid = 0) {
 
   }
   	
-  long uptimeLong = stol(value, nullptr, 10);
+  long uptimeClockTicks = stol(value, nullptr, 10);
+  float uptimeSeconds = uptimeClockTicks / sysconf(_SC_CLK_TCK);
 //   cout << "VALUEEE: " << uptimeLong << "\n";
   
-  return uptimeLong; 
+  return uptimeSeconds; 
 }
 
 vector<long> LinuxParser::getProcessStats(int pid = 0){
-  	// TODO: Very similar to UpTime(int pid) above. 
-	return [];
+    
+  //   2.    /proc/[PID]/stat
+  // 				#14 utime - CPU time spent in user code, measured in clock ticks
+  // 				#15 stime - CPU time spent in kernel code, measured in clock ticks
+  // 				#16 cutime - Waited-for children's CPU time spent in user code (in clock ticks)
+  //				#17 cstime - Waited-for children's CPU time spent in kernel code (in clock ticks)
+  // 				#22 starttime - Time when the process started, measured in clock ticks
+  
+  string line, value;
+  long utime, stime, cutime, cstime, starttime; 
+  std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
+  
+  if (stream.is_open()) { 
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+         
+    linestream >> value >> value >> value >>  value >>  value >>  value 
+      >> value >>  value >>  value >>  value >>  value >>  value 
+      >> value >>  utime >>  stime >>  cutime >>  cstime >>  value 
+      >>  value >>  value >>  value >>  starttime;  
+  } 
+  
+  
+  vector<long> processStats = {utime, stime, cutime, cstime, starttime};
+  return processStats;
 }

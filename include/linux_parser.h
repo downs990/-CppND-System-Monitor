@@ -32,7 +32,7 @@ std::string OperatingSystem();
 std::string Kernel();
 
 // CPU
-enum CPUStates {
+enum CPUStates { // TODO: Do something with this??? 
   kUser_ = 0,
   kNice_,
   kSystem_,
