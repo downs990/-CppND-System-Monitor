@@ -38,6 +38,7 @@ float Process::CpuUtilization() {
     //                        = [#14 , #15, #16, #17, #22]
   	vector<long> processStats = LinuxParser::getProcessStats(myPID);
   
+  
     //   3. Hertz (number of clock ticks per second) of your system.
     // 			- In most cases, getconf CLK_TCK can be used to return the number of clock ticks.
     // 			- The sysconf(_SC_CLK_TCK) C function call may also be used to return the hertz value.
