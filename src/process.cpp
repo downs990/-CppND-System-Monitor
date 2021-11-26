@@ -41,7 +41,7 @@ float Process::CpuUtilization() {
     //   3. Hertz (number of clock ticks per second) of your system.
     // 			- In most cases, getconf CLK_TCK can be used to return the number of clock ticks.
     // 			- The sysconf(_SC_CLK_TCK) C function call may also be used to return the hertz value.
-	long hertz = 0; 
+	  long hertz = 0; 
   
   	// Calculation 
     // First we determine the total time spent for the process:
