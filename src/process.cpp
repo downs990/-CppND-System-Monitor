@@ -76,10 +76,9 @@ string Process::User() {
 
 // TODO: Return the age of this process (in seconds)
 long int Process::UpTime() { 
-	return LinuxParser::UpTime(myPID); // ??? Is this in seconds??
+	return LinuxParser::UpTime(myPID);  
 }
-
-// TODO: Overload the "less than" comparison operator for Process objects 
+ 
 bool Process::operator<(Process &argProcess){ // TODO: ???? [[maybe_unused]] ??? add const back ????
   
   // Compare based on CPU Utilization. 

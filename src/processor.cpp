@@ -23,8 +23,7 @@ void Processor::UpdateValuesMap(string valueName, string value){
            valuesMap[valueName][1] = newValue;     
         }
     }
- 
-//   	cout << "Name " << valueName << "            values: " << valuesMap[valueName][0] << " " << valuesMap[valueName][1] << "\n";
+  
 }
   
 
@@ -61,24 +60,20 @@ float Processor::Utilization() {
 //  10. guest_nice: running a niced guest
   
   	vector<string> cpuPropertyValues = LinuxParser::CpuUtilization();
-      
-   
-	// Keeps track of current and previous values.
- 	UpdateValuesMap("user", cpuPropertyValues[0]);
-    UpdateValuesMap("nice", cpuPropertyValues[1]);
-    UpdateValuesMap("system", cpuPropertyValues[2]);
-    UpdateValuesMap("idle", cpuPropertyValues[3]);
-    UpdateValuesMap("iowait", cpuPropertyValues[4]);
-    UpdateValuesMap("irq", cpuPropertyValues[5]);
-    UpdateValuesMap("softirq", cpuPropertyValues[6]);
-    UpdateValuesMap("steal", cpuPropertyValues[7]);
-    UpdateValuesMap("guest", cpuPropertyValues[8]);
-    UpdateValuesMap("guest_nice", cpuPropertyValues[9]);
+        
  
-//   	TODO: Check if this still works ^^^
-  
-  
-  
+	// Keeps track of current and previous values.
+ 	UpdateValuesMap("user", cpuPropertyValues[LinuxParser::CPUStates::kUser_]);
+    UpdateValuesMap("nice", cpuPropertyValues[LinuxParser::CPUStates::kNice_]);
+    UpdateValuesMap("system", cpuPropertyValues[LinuxParser::CPUStates::kSystem_]);
+    UpdateValuesMap("idle", cpuPropertyValues[LinuxParser::CPUStates::kIdle_]);
+    UpdateValuesMap("iowait", cpuPropertyValues[LinuxParser::CPUStates::kIOwait_]);
+    UpdateValuesMap("irq", cpuPropertyValues[LinuxParser::CPUStates::kIRQ_]);
+    UpdateValuesMap("softirq", cpuPropertyValues[LinuxParser::CPUStates::kSoftIRQ_]);
+    UpdateValuesMap("steal", cpuPropertyValues[LinuxParser::CPUStates::kSteal_]);
+    UpdateValuesMap("guest", cpuPropertyValues[LinuxParser::CPUStates::kGuest_]);
+    UpdateValuesMap("guest_nice", cpuPropertyValues[LinuxParser::CPUStates::kGuestNice_]);
+   
   
 //  ************  ALGORITHM TO IMPLEMENT FOR CPU USAGE %  ***************
 //   	[0] = previous      [1] = current 

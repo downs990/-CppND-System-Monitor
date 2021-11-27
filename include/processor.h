@@ -19,10 +19,7 @@ class Processor {
   	unordered_map<string, vector<int>> valuesMap;
   	void UpdateValuesMap(string valueName, string value);
   
-  
-  
-  
-  
+   
 };
 
 #endif

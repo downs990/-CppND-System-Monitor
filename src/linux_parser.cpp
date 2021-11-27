@@ -77,13 +77,9 @@ vector<int> LinuxParser::Pids() {
 
 // TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { 
- 
   
-    unordered_map<string, string> propertyNameAndValue;
-  
-  
-    string trash; 
-    string line;
+    string name, line;
+  	float value = 0, totalMem = 0, freeMem = 0;
     std::ifstream stream(kProcDirectory + kMeminfoFilename);
     if (stream.is_open()) {
       
@@ -91,36 +87,22 @@ float LinuxParser::MemoryUtilization() {
       while(index < 48){//!stream.eof()){
         std::getline(stream, line);
         std::istringstream linestream(line);
-        
-        string name, value;
+         
         linestream >> name >> value;
-        name = std::regex_replace(name, std::regex("\\:"), ""); // removes colon char from name  
-        propertyNameAndValue[name] = value;
+        if(name == "MemTotal:"){
+          
+          totalMem = value;
+        }else if(name == "MemAvailable:"){
+          
+          freeMem = value;
+        }
         
         index++;
       } 
     }
   
   
-//   Total used memory = MemTotal - MemFree
-//	 Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
-// 	 Buffers (blue) = Buffers
-//   Cached memory (yellow) = Cached + SReclaimable - Shmem
-//   Swap = SwapTotal - SwapFree
-   
-  	// Convert string to float 
-  	string memtotal = propertyNameAndValue["MemTotal"];
-    string memfree =  propertyNameAndValue["MemFree"];
-//   	string buffers =  propertyNameAndValue["Buffers"];
-//   	string cached =   propertyNameAndValue["Cached"];	
-  
-	float totalmem = ::atof(memtotal.c_str());
-  	float freemem = ::atof(memfree.c_str());
-//     float buff = ::atof(buffers.c_str());
-//     float cach = ::atof(cached.c_str());
-//     float green = (totalmem - freemem) - (buff + cach);
-  
-  	float totalMemUsed = (totalmem - freemem) / totalmem; // percentage % 
+  	float totalMemUsed = (totalMem - freeMem) / totalMem; // percentage % 
     return totalMemUsed;
 }
 
@@ -199,12 +181,13 @@ vector<string> LinuxParser::CpuUtilization() {
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    
+     
     string cpu_title = "";
     linestream >> cpu_title 
-      			>> cpuPropertyValues[0] >> cpuPropertyValues[1] >> cpuPropertyValues[2] >> cpuPropertyValues[3] 
-      			>> cpuPropertyValues[4] >> cpuPropertyValues[5] >> cpuPropertyValues[6] >> cpuPropertyValues[7] 
-      			>> cpuPropertyValues[8] >> cpuPropertyValues[9];   
+      			>> cpuPropertyValues[CPUStates::kUser_] >> cpuPropertyValues[CPUStates::kNice_] >> cpuPropertyValues[CPUStates::kSystem_] 
+      			>> cpuPropertyValues[CPUStates::kIdle_] >> cpuPropertyValues[CPUStates::kIOwait_] >> cpuPropertyValues[CPUStates::kIRQ_] 
+      			>> cpuPropertyValues[CPUStates::kSoftIRQ_] >> cpuPropertyValues[CPUStates::kSteal_] >> cpuPropertyValues[CPUStates::kGuest_] 
+      			>> cpuPropertyValues[CPUStates::kGuestNice_];   
   }
     
   return cpuPropertyValues;
@@ -302,7 +285,7 @@ string LinuxParser::Ram(int pid = 0) {
 
 // TODO: Read and return the user ID associated with a process 
 string LinuxParser::Uid(int pid = 0) { 
-// !
+
    
 //   The UID for a process is stored in /proc/[PID]/status. (on line 9)
 //  
@@ -403,8 +386,7 @@ long LinuxParser::UpTime(int pid = 0) {
   }
   	
   long uptimeClockTicks = stol(value, nullptr, 10);
-  float uptimeSeconds = uptimeClockTicks / sysconf(_SC_CLK_TCK);
-//   cout << "VALUEEE: " << uptimeLong << "\n";
+  float uptimeSeconds = uptimeClockTicks / sysconf(_SC_CLK_TCK); 
   
   return uptimeSeconds; 
 }
